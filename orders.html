@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #232f3e;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        .orders-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .order-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-items {
+            margin: 1rem 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .order-total {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nav-links {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Logo">
+        </div>
+        <div class="nav-links">
+            <a href="index3.html">Home</a>
+            <a href="orders.html">Orders</a>
+            <a href="shopping.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+        </div>
+    </nav>
+
+    <div class="orders-container">
+        <h1>Your Orders</h1>
+        <div id="orders-list">
+            <!-- Orders will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Load orders from localStorage
+        function loadOrders() {
+            const storedOrders = localStorage.getItem('orders');
+            return storedOrders ? JSON.parse(storedOrders) : [];
+        }
+
+        // Display orders
+        function displayOrders() {
+            const ordersList = document.getElementById('orders-list');
+            const orders = loadOrders();
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<p>No orders found.</p>';
+                return;
+            }
+
+            orders.forEach((order, index) => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                
+                const date = new Date(order.date);
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <div>
+                            <h3>Order #${index + 1}</h3>
+                            <p>Placed on: ${date.toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                            <span class="order-status">Status: ${order.status || 'Processing'}</span>
+                        </div>
+                    </div>
+                    <div class="order-items">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span>${item.name}</span>
+                                <span>$${item.price.toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="order-total">
+                        Total: $${order.total.toFixed(2)}
+                    </div>
+                `;
+                
+                ordersList.appendChild(orderCard);
+            });
+        }
+
+        // Initial display
+        displayOrders();
+    </script>
+</body>
+</html>
